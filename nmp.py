@@ -1,13 +1,10 @@
-import sys
-
-
 def display_menu():
 	print("1. Add matrices")
 	print("2. Multiply matrix to a constant")
 	print("3. Multiply matrices")
-	#print("4. Transpose matrix")
-	#print("5. Calculate a determinant")
-	#print("6. Inverse")
+	print("4. Transpose matrix")
+	# print("5. Calculate a determinant")
+	# print("6. Inverse")
 	print("0. Exit")
 	
 	
@@ -46,6 +43,19 @@ def matrices_multp(matrix1, matrix2):
 	matrix = [[sum(row * col for row, col in zip(X_row, Y_col)) for Y_col in zip(*matrix2)] for X_row in matrix1]
 	
 	return matrix
+	
+	
+def transpose_matrix(matrix1, c):
+	if c == '1':
+		matrix = [list(t) for t in zip(*matrix1)]
+	elif c == '2':
+		matrix = [list(t)[::-1] for t in zip(*matrix1)][::-1]
+	elif c == '3':
+		matrix = [t[::-1] for t in matrix1]
+	elif c == '4':
+		matrix = matrix1[::-1]
+	
+	return matrix
 
 
 def main():
@@ -56,6 +66,13 @@ def main():
 		if user == '0':
 			break
 		
+		if user == '4':
+			print('\n1. Main diagonal')
+			print('2. Side diagonal')
+			print('3. Vertical diagonal')
+			print('4. Horizontal diagonal')
+			choice = input()
+			
 		r1, c1 = map(int, input("Enter size of first matrix: ").split())
 		matrix_1 = create_matrix(r1)
 		if user in ['1', '3']:
@@ -78,7 +95,7 @@ def main():
 			else:
 				print('The operation cannot be performed')
 		elif user == '4':
-			result = transpose_matrix(matrix_1)
+			result = transpose_matrix(matrix_1, choice)
 			print_matrix(result)
 		elif user == '5':
 			result = determinant(matrix_1)
