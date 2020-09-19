@@ -4,7 +4,7 @@ def display_menu():
    print("3. Multiply matrices")
    print("4. Transpose matrix")
    print("5. Calculate a determinant")
-   # print("6. Inverse")
+   print("6. Inverse")
    print("0. Exit")
    
    
@@ -64,7 +64,7 @@ def determinant(matrix1, total=0):
    
    # Section 2: when at 1x1 submatrices recursive call end
    if len(matrix1) == 1:
-	   return matrix1[0][0]
+      return matrix1[0][0]
    # Section 3: when at 2x2 submatrices recursive calls end
    if len(matrix1) == 2 and len(matrix1[0]) == 2:
      val = matrix1[0][0] * matrix1[1][1] - matrix1[1][0] * matrix1[0][1]
@@ -90,7 +90,41 @@ def determinant(matrix1, total=0):
      total += sign * matrix1[0][fc] * sub_det 
    
    return total
-
+   
+   
+def inverse(matrix1, total=0):   
+   # Section 1: Make copies of A & I, AM & IM, to use for row ops
+   n = len(matrix1)
+   AM = [row[:] for row in matrix1]
+   I = []
+   for i in range(n):
+      row = []
+      for j in range(n):
+         if i == j:
+            row.append(1)
+         else:
+            row.append(0)
+      I.append(row)
+   IM = [row[:] for row in I]
+   
+   # Section 2: Perform row operations
+   indices = list(range(n)) # to allow flexible row referencing ***
+   for fd in range(n): # fd stands for focus diagonal
+      fdScaler = 1.0 / AM[fd][fd]
+      # FIRST: scale fd row with fd inverse. 
+      for j in range(n): # Use j to indicate column looping.
+         AM[fd][j] *= fdScaler
+         IM[fd][j] *= fdScaler
+      # SECOND: operate on all rows except fd row as follows:
+      for i in indices[0:fd] + indices[fd+1:]: 
+         # *** skip row with fd in it.
+         crScaler = AM[i][fd] # cr stands for "current row".
+         for j in range(n): 
+             # cr - crScaler * fdRow, but one element at a time.
+             AM[i][j] = AM[i][j] - crScaler * AM[fd][j]
+             IM[i][j] = IM[i][j] - crScaler * IM[fd][j]
+   return IM
+   
 
 def main():
    while True:
@@ -147,8 +181,11 @@ def main():
          r1, c1 = map(int, input("Enter size of first matrix: ").split())
          matrix_1 = create_matrix(r1)
          
-         result = inverse(matrix_1)
-         print_matrix(result)
+         if len(matrix_1) == len(matrix_1[0]) and determinant(matrix_1) != 0:
+            result = inverse(matrix_1)
+            print_matrix(result)
+         else:
+            print("This matrix doesn't have an inverse")
       elif user == '0':
          break
    
